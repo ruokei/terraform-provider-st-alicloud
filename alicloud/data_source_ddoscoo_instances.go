@@ -15,19 +15,19 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &antiddosCooInstancesDetailDataSource{}
-	_ datasource.DataSourceWithConfigure = &antiddosCooInstancesDetailDataSource{}
+	_ datasource.DataSource              = &ddoscooInstancesDataSource{}
+	_ datasource.DataSourceWithConfigure = &ddoscooInstancesDataSource{}
 )
 
-func NewAntiddosCooInstanceDetailsDataSource() datasource.DataSource {
-	return &antiddosCooInstancesDetailDataSource{}
+func NewDdosCooInstancesDataSource() datasource.DataSource {
+	return &ddoscooInstancesDataSource{}
 }
 
-type antiddosCooInstancesDetailDataSource struct {
+type ddoscooInstancesDataSource struct {
 	client *alicloudAntiddosClient.Client
 }
 
-type antiddosCooInstancesDetailDataSourceModel struct {
+type ddoscooInstancesDataSourceModel struct {
 	Remark    types.String                 `tfsdk:"remark_regex"`
 	IDs       types.List                   `tfsdk:"ids"`
 	Instances []*antiddosCooInstanceDetail `tfsdk:"instances"`
@@ -53,11 +53,11 @@ type antiddosCooInstanceDetail struct {
 	Eip              types.List   `tfsdk:"eip"`
 }
 
-func (d *antiddosCooInstancesDetailDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_antiddos_coo_instances_detail"
+func (d *ddoscooInstancesDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_ddoscoo_instances"
 }
 
-func (d *antiddosCooInstancesDetailDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ddoscooInstancesDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "This data source provides the AntiDDoS domain resources of the current AliCloud user.",
 		Attributes: map[string]schema.Attribute{
@@ -151,7 +151,7 @@ func (d *antiddosCooInstancesDetailDataSource) Schema(_ context.Context, req dat
 	}
 }
 
-func (d *antiddosCooInstancesDetailDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ddoscooInstancesDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -159,8 +159,8 @@ func (d *antiddosCooInstancesDetailDataSource) Configure(_ context.Context, req 
 	d.client = req.ProviderData.(alicloudClients).antiddosClient
 }
 
-func (d *antiddosCooInstancesDetailDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var plan, state antiddosCooInstancesDetailDataSourceModel
+func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var plan, state ddoscooInstancesDataSourceModel
 	diags := req.Config.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

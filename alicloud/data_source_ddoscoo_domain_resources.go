@@ -14,28 +14,28 @@ import (
 )
 
 var (
-	_ datasource.DataSource              = &antiddosCooDomainDataSource{}
-	_ datasource.DataSourceWithConfigure = &antiddosCooDomainDataSource{}
+	_ datasource.DataSource              = &ddoscooDomainResourcesDataSource{}
+	_ datasource.DataSourceWithConfigure = &ddoscooDomainResourcesDataSource{}
 )
 
-func NewAntiddosCooDomainDataSource() datasource.DataSource {
-	return &antiddosCooDomainDataSource{}
+func NewDdosCooDomainResourcesDataSource() datasource.DataSource {
+	return &ddoscooDomainResourcesDataSource{}
 }
 
-type antiddosCooDomainDataSource struct {
+type ddoscooDomainResourcesDataSource struct {
 	client *alicloudAntiddosClient.Client
 }
 
-type antiddosCooDomainDataSourceModel struct {
+type ddoscooDomainResourcesDataSourceModel struct {
 	DomainName  types.String `tfsdk:"domain_name"`
 	DomainCName types.String `tfsdk:"domain_cname"`
 }
 
-func (d *antiddosCooDomainDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
-	resp.TypeName = req.ProviderTypeName + "_antiddos_coo_domain"
+func (d *ddoscooDomainResourcesDataSource) Metadata(_ context.Context, req datasource.MetadataRequest, resp *datasource.MetadataResponse) {
+	resp.TypeName = req.ProviderTypeName + "_ddoscoo_domain_resources"
 }
 
-func (d *antiddosCooDomainDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
+func (d *ddoscooDomainResourcesDataSource) Schema(_ context.Context, req datasource.SchemaRequest, resp *datasource.SchemaResponse) {
 	resp.Schema = schema.Schema{
 		Description: "This data source provides the AntiDDoS domain resources of the current AliCloud user.",
 		Attributes: map[string]schema.Attribute{
@@ -51,7 +51,7 @@ func (d *antiddosCooDomainDataSource) Schema(_ context.Context, req datasource.S
 	}
 }
 
-func (d *antiddosCooDomainDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
+func (d *ddoscooDomainResourcesDataSource) Configure(_ context.Context, req datasource.ConfigureRequest, resp *datasource.ConfigureResponse) {
 	if req.ProviderData == nil {
 		return
 	}
@@ -59,8 +59,8 @@ func (d *antiddosCooDomainDataSource) Configure(_ context.Context, req datasourc
 	d.client = req.ProviderData.(alicloudClients).antiddosClient
 }
 
-func (d *antiddosCooDomainDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
-	var plan, state antiddosCooDomainDataSourceModel
+func (d *ddoscooDomainResourcesDataSource) Read(ctx context.Context, req datasource.ReadRequest, resp *datasource.ReadResponse) {
+	var plan, state ddoscooDomainResourcesDataSourceModel
 	diags := req.Config.Get(ctx, &plan)
 	resp.Diagnostics.Append(diags...)
 	if resp.Diagnostics.HasError() {

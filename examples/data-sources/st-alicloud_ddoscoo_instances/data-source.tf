@@ -3,12 +3,12 @@ provider "st-alicloud" {
   region = "ap-southeast-1"
 }
 
-data "st-alicloud_antiddos_coo_instances_detail" "ins" {
+data "st-alicloud_ddoscoo_instances" "ins" {
   provider     = st-alicloud.antiddos-instance
   ids          = ["id1", "id2"]
   remark_regex = "^example-remark"
 }
 
-output "alicloud_antiddos_coo_instances_detail" {
-  value = data.st-alicloud_antiddos_coo_instances_detail.ins
+output "alicloud_ddoscoo_instances" {
+  value = data.st-alicloud_ddoscoo_instances.ins
 }

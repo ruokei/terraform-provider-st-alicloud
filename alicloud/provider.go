@@ -295,8 +295,8 @@ func (p *alicloudProvider) Configure(ctx context.Context, req provider.Configure
 func (p *alicloudProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewCdnDomainDataSource,
-		NewAntiddosCooInstanceDetailsDataSource,
-		NewAntiddosCooDomainDataSource,
+		NewDdosCooInstancesDataSource,
+		NewDdosCooDomainResourcesDataSource,
 		NewSlbLoadBalancersDataSource,
 	}
 }
