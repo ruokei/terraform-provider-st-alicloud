@@ -71,7 +71,7 @@ scenario. The reason behind every resources and data sources are stated as below
   AntiDDoS domain resources through
   [*alicloud_antiddos_coo_domain_resources*](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/ddoscoo_domain_resources).
 
-  - **st-alicloud_antiddos_instances_detail**
+- **st-alicloud_antiddos_instances_detail**
 
   Official AliCloud Terraform provider does not support querying the Eip of
   AntiDDoS instance resources through
