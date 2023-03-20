@@ -80,7 +80,7 @@ scenario. The reason behind every resources and data sources are stated as below
 
 - **st-alicloud_ddoscoo_instances**
 
-  Official AliCloud Terraform provider does not support querying the Eip of
+  Official AliCloud Terraform provider does not support querying the EIP of
   AntiDDoS instance resources through
   [*alicloud_ddoscoo_instances*](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/data-sources/ddoscoo_instances).
 

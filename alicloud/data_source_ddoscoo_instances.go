@@ -30,10 +30,10 @@ type ddoscooInstancesDataSource struct {
 type ddoscooInstancesDataSourceModel struct {
 	Remark    types.String                 `tfsdk:"remark_regex"`
 	IDs       types.List                   `tfsdk:"ids"`
-	Instances []*antiddosCooInstanceDetail `tfsdk:"instances"`
+	Instances []*antiddosCooInstance       `tfsdk:"instances"`
 }
 
-type antiddosCooInstanceDetail struct {
+type antiddosCooInstance struct {
 	ID               types.String `tfsdk:"id"`
 	Name             types.String `tfsdk:"name"`
 	BaseBandwidth    types.Int64  `tfsdk:"base_bandwidth"`
@@ -169,7 +169,7 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 
 	state.IDs = plan.IDs
 	state.Remark = plan.Remark
-	state.Instances = []*antiddosCooInstanceDetail{}
+	state.Instances = []*antiddosCooInstance{}
 
 	var antiddosInstances *alicloudAntiddosClient.DescribeInstancesResponse
 	var antiddosInstanceSpecs *alicloudAntiddosClient.DescribeInstanceSpecsResponse
@@ -182,7 +182,6 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 	describeInstanceSpecsRequest := &alicloudAntiddosClient.DescribeInstanceSpecsRequest{}
 	describeInstanceDetailsRequest := &alicloudAntiddosClient.DescribeInstanceDetailsRequest{}
 
-	var err error
 	var nameRegex *regexp.Regexp
 
 	runtime := &util.RuntimeOptions{}
@@ -200,43 +199,39 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 	if !(plan.Remark.IsNull() || plan.Remark.IsUnknown()) {
 		// Convert Remark Input to Regex
 		v := plan.Remark.ValueString()
-		if r, err := regexp.Compile(v); err == nil {
-			nameRegex = r
-		}
-		if err != nil {
+		if r, err := regexp.Compile(v); err != nil {
 			resp.Diagnostics.AddError(
 				"[API ERROR] Failed to Convert Remark Input to Regex",
 				err.Error(),
 			)
 			return
+		} else {
+			nameRegex = r
 		}
 	}
 
 	// Describe Instances
-	tryErr := func() (_e error) {
+	if descInstancesErr := func() (_e error) {
 		defer func() {
 			if r := tea.Recover(recover()); r != nil {
 				_e = r
 			}
 		}()
 
-		antiddosInstances, err = d.client.DescribeInstancesWithOptions(describeInstancesRequest, runtime)
-		if err != nil {
+		var err error
+		if antiddosInstances, err = d.client.DescribeInstancesWithOptions(describeInstancesRequest, runtime); err != nil {
 			return err
 		}
 		return nil
-	}()
-
-	if tryErr != nil {
+	}(); descInstancesErr != nil {
 		var error = &tea.SDKError{}
-		if _t, ok := tryErr.(*tea.SDKError); ok {
+		if _t, ok := descInstancesErr.(*tea.SDKError); ok {
 			error = _t
 		} else {
-			error.Message = tea.String(tryErr.Error())
+			error.Message = tea.String(descInstancesErr.Error())
 		}
 
-		_, err := util.AssertAsString(error.Message)
-		if err != nil {
+		if _, err := util.AssertAsString(error.Message); err != nil {
 			resp.Diagnostics.AddError(
 				"[API ERROR] Failed to Describe AntiDDoS Instances",
 				err.Error(),
@@ -258,30 +253,28 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 
 		// Describe Instance Specs
 		describeInstanceSpecsRequest.InstanceIds = tea.StringSlice(antiddosInstancesList)
-		tryErrSpecs := func() (_e error) {
+		if descSpecsErr := func() (_e error) {
 			defer func() {
 				if r := tea.Recover(recover()); r != nil {
 					_e = r
 				}
 			}()
 
-			antiddosInstanceSpecs, err = d.client.DescribeInstanceSpecsWithOptions(describeInstanceSpecsRequest, runtime)
-			if err != nil {
+			var err error
+			if antiddosInstanceSpecs, err = d.client.DescribeInstanceSpecsWithOptions(describeInstanceSpecsRequest, runtime);
+				err != nil {
 				return err
 			}
 			return nil
-		}()
-
-		if tryErrSpecs != nil {
+		}(); descSpecsErr != nil {
 			var error = &tea.SDKError{}
-			if _t, ok := tryErrSpecs.(*tea.SDKError); ok {
+			if _t, ok := descSpecsErr.(*tea.SDKError); ok {
 				error = _t
 			} else {
-				error.Message = tea.String(tryErrSpecs.Error())
+				error.Message = tea.String(descSpecsErr.Error())
 			}
 
-			_, err := util.AssertAsString(error.Message)
-			if err != nil {
+			if _, err := util.AssertAsString(error.Message); err != nil {
 				resp.Diagnostics.AddError(
 					"[API ERROR] Failed to Describe AntiDDoS Instance Specs",
 					err.Error(),
@@ -292,30 +285,28 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 
 		// Describe Instance Details
 		describeInstanceDetailsRequest.InstanceIds = tea.StringSlice(antiddosInstancesList)
-		tryErrDetails := func() (_e error) {
+		if descDetailsErr := func() (_e error) {
 			defer func() {
 				if r := tea.Recover(recover()); r != nil {
 					_e = r
 				}
 			}()
 
-			antiddosInstanceDetails, err = d.client.DescribeInstanceDetailsWithOptions(describeInstanceDetailsRequest, runtime)
-			if err != nil {
+			var err error
+			if antiddosInstanceDetails, err = d.client.DescribeInstanceDetailsWithOptions(describeInstanceDetailsRequest, runtime);
+				err != nil {
 				return err
 			}
 			return nil
-		}()
-
-		if tryErrDetails != nil {
+		}(); descDetailsErr != nil {
 			var error = &tea.SDKError{}
-			if _t, ok := tryErrDetails.(*tea.SDKError); ok {
+			if _t, ok := descDetailsErr.(*tea.SDKError); ok {
 				error = _t
 			} else {
-				error.Message = tea.String(tryErr.Error())
+				error.Message = tea.String(descDetailsErr.Error())
 			}
 
-			_, err := util.AssertAsString(error.Message)
-			if err != nil {
+			if _, err := util.AssertAsString(error.Message); err != nil {
 				resp.Diagnostics.AddError(
 					"[API ERROR] Failed to Describe AntiDDoS Instance Details",
 					err.Error(),
@@ -324,7 +315,7 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 			}
 		}
 
-		// Assign All Values into Instances
+		// Assign all values into instances
 		for i := 0; i < len(antiddosInstancesList); i++ {
 
 			var instanceEipList []attr.Value
@@ -332,7 +323,7 @@ func (d *ddoscooInstancesDataSource) Read(ctx context.Context, req datasource.Re
 				instanceEipList = append(instanceEipList, types.StringValue(*instanceDetailsEip.Eip))
 			}
 
-			instanceDetail := &antiddosCooInstanceDetail{
+			instanceDetail := &antiddosCooInstance{
 				ID:               types.StringValue(antiddosInstancesList[i]),
 				Name:             types.StringValue(*antiddosInstances.Body.Instances[i].Remark),
 				BaseBandwidth:    types.Int64Value(int64(*antiddosInstanceSpecs.Body.InstanceSpecs[i].BaseBandwidth)),
