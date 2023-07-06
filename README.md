@@ -70,11 +70,13 @@ scenario. The reason behind every resources and data sources are stated as below
   will remove all other attached users for the target group, which may cause a
   problem where Terraform may delete those users attached outside from Terraform.
 
-- **st-alicloud_cms_alarm_rule**
+- **st-alicloud_cms_composite_group_metric_rule**
 
   The official AliCloud Terraform provider's resource
-  [*alicloud_cms_alarm*](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/cms_alarm)
-  does not support adding alarm rules based on expression-based creation.
+  [*alicloud_cms_group_metric_rule*](https://registry.terraform.io/providers/aliyun/alicloud/latest/docs/resources/cms_group_metric_rule)
+  does not support adding alarm rules into application groups based on expression-based creation.
+
+  For namespaces and metric inputs, please refer to: [*Alicloud Alarm Metric List*](https://cms.console.aliyun.com/metric-meta)
 
 ### Data Sources
 
